@@ -1,13 +1,22 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowDown, Download, Mail, Linkedin, Github, Sparkles } from 'lucide-react';
+import { ArrowDown, Mail, Linkedin, Github, Sparkles, type LucideIcon } from 'lucide-react';
 import { useLanguage } from './language-provider';
+import { getIcon } from '@/lib/supabase/icon-map';
+import type { HeroContent, HeroStat, SiteSettings, SocialLink } from '@/lib/supabase/types';
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
-export function Hero() {
-  const { t } = useLanguage();
+interface HeroProps {
+  content: HeroContent | null;
+  stats: HeroStat[];
+  siteSettings: SiteSettings | null;
+  socialLinks: SocialLink[];
+}
+
+export function Hero({ content, stats, siteSettings, socialLinks }: HeroProps) {
+  const { t, locale } = useLanguage();
   const reduce = useReducedMotion();
 
   const container = {
@@ -25,6 +34,24 @@ export function Hero() {
     show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: easeOut } },
   };
 
+  const title = content ? (locale === 'ar' ? content.title_ar : content.title_en) : 'Youssef M. Marey';
+  const titleParts = title.split(' ');
+  const badgeText = content ? (locale === 'ar' ? content.badge_text_ar : content.badge_text_en) : 'Available for opportunities';
+  const description = content
+    ? (locale === 'ar' ? content.description_ar : content.description_en)
+    : 'career development specialist, bilingual project coordinator, and monitoring & evaluation practitioner from Kafr El-Sheikh, Egypt.';
+  const ctaWork = content ? (locale === 'ar' ? content.cta_work_ar : content.cta_work_en) : t('hero.cta.work');
+  const ctaContact = content ? (locale === 'ar' ? content.cta_contact_ar : content.cta_contact_en) : t('hero.cta.contact');
+  const showBadge = siteSettings ? siteSettings.available_for_opportunities : true;
+
+  const socials = socialLinks.length > 0
+    ? socialLinks.map((s) => ({ icon: getIcon(s.icon_name) as LucideIcon, href: s.url, label: s.label_en }))
+    : [
+        { icon: Linkedin, href: 'https://linkedin.com/in/maaaar3y', label: 'LinkedIn' },
+        { icon: Github, href: 'https://github.com/maaaar3y', label: 'GitHub' },
+        { icon: Mail, href: 'mailto:maaaar3y@gmail.com', label: 'Email' },
+      ];
+
   return (
     <section
       id="home"
@@ -37,23 +64,31 @@ export function Hero() {
         className="section-shell relative z-10 flex flex-col items-center text-center"
       >
         {/* Badge */}
-        <motion.div variants={item}>
-          <div className="glass mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
-            </span>
-            <span className="text-muted-foreground">Available for opportunities</span>
-          </div>
-        </motion.div>
+        {showBadge && (
+          <motion.div variants={item}>
+            <div className="glass mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+              </span>
+              <span className="text-muted-foreground">{badgeText}</span>
+            </div>
+          </motion.div>
+        )}
 
         {/* Name */}
         <motion.h1
           variants={item}
           className="font-serif text-5xl font-bold tracking-tight text-balance sm:text-6xl md:text-7xl lg:text-8xl"
         >
-          Youssef M.{' '}
-          <span className="text-gradient">Marey</span>
+          {titleParts.length > 1 ? (
+            <>
+              {titleParts.slice(0, -1).join(' ')}{' '}
+              <span className="text-gradient">{titleParts[titleParts.length - 1]}</span>
+            </>
+          ) : (
+            <span className="text-gradient">{title}</span>
+          )}
         </motion.h1>
 
         {/* Tagline */}
@@ -61,9 +96,7 @@ export function Hero() {
           variants={item}
           className="mt-6 max-w-2xl text-lg text-muted-foreground text-pretty sm:text-xl"
         >
-          {t('hero.tagline')} — career development specialist, bilingual project
-          coordinator, and monitoring &amp; evaluation practitioner from Kafr
-          El-Sheikh, Egypt.
+          {t('hero.tagline')} — {description}
         </motion.p>
 
         {/* CTA buttons */}
@@ -78,7 +111,7 @@ export function Hero() {
             className="group relative flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5"
           >
             <Sparkles className="h-4 w-4" />
-            {t('hero.cta.work')}
+            {ctaWork}
           </button>
           <button
             onClick={() =>
@@ -87,17 +120,13 @@ export function Hero() {
             className="flex items-center gap-2 rounded-full border border-border/60 bg-card/40 px-7 py-3 text-sm font-medium text-foreground backdrop-blur-sm transition-all hover:border-primary/40 hover:bg-primary/5 hover:-translate-y-0.5"
           >
             <Mail className="h-4 w-4" />
-            {t('hero.cta.contact')}
+            {ctaContact}
           </button>
         </motion.div>
 
         {/* Social links */}
         <motion.div variants={item} className="mt-8 flex items-center gap-3">
-          {[
-            { icon: Linkedin, href: 'https://linkedin.com/in/maaaar3y', label: 'LinkedIn' },
-            { icon: Github, href: 'https://github.com/maaaar3y', label: 'GitHub' },
-            { icon: Mail, href: 'mailto:maaaar3y@gmail.com', label: 'Email' },
-          ].map((social) => (
+          {socials.map((social) => (
             <a
               key={social.label}
               href={social.href}
@@ -112,26 +141,24 @@ export function Hero() {
         </motion.div>
 
         {/* Stats strip */}
-        <motion.div
-          variants={item}
-          className="mt-16 grid w-full max-w-2xl grid-cols-3 gap-4"
-        >
-          {[
-            { value: '3.61', label: 'GPA / 4.00', suffix: '' },
-            { value: '70', label: 'Training Programs', suffix: '+' },
-            { value: '1000', label: 'Event Participants', suffix: '+' },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="font-serif text-2xl font-bold text-foreground sm:text-3xl">
-                {stat.value}
-                <span className="text-primary">{stat.suffix}</span>
+        {stats.length > 0 && (
+          <motion.div
+            variants={item}
+            className="mt-16 grid w-full max-w-2xl grid-cols-3 gap-4"
+          >
+            {stats.map((stat) => (
+              <div key={stat.id} className="text-center">
+                <div className="font-serif text-2xl font-bold text-foreground sm:text-3xl">
+                  {stat.value}
+                  {stat.suffix && <span className="text-primary">{stat.suffix}</span>}
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                  {locale === 'ar' ? stat.label_ar : stat.label_en}
+                </div>
               </div>
-              <div className="mt-1 text-xs text-muted-foreground sm:text-sm">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </motion.div>
+            ))}
+          </motion.div>
+        )}
       </motion.div>
 
       {/* Scroll indicator */}

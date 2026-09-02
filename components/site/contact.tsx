@@ -4,27 +4,53 @@ import { Reveal } from '@/components/motion/reveal';
 import { SectionHeading } from './section-heading';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Phone, MapPin, Linkedin, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Send, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
+import { useLanguage } from './language-provider';
+import { getIcon } from '@/lib/supabase/icon-map';
+import { submitContactMessage } from '@/lib/supabase/data';
+import type { ContactInfo, SocialLink } from '@/lib/supabase/types';
 
-const contactInfo = [
-  { icon: Mail, label: 'Email', value: 'maaaar3y@gmail.com', href: 'mailto:maaaar3y@gmail.com' },
-  { icon: Phone, label: 'Phone', value: '+20 100 479 3760', href: 'tel:+201004793760' },
-  { icon: MapPin, label: 'Location', value: 'Kafr El-Sheikh, Egypt', href: null },
-  { icon: Linkedin, label: 'LinkedIn', value: 'linkedin.com/in/maaaar3y', href: 'https://linkedin.com/in/maaaar3y' },
-];
+interface ContactProps {
+  contactInfo: ContactInfo | null;
+  socialLinks: SocialLink[];
+}
 
-export function Contact() {
+export function Contact({ contactInfo, socialLinks }: ContactProps) {
+  const { locale } = useLanguage();
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+
+  const contactItems = contactInfo
+    ? [
+        { icon: Mail, label: 'Email', value: contactInfo.email, href: `mailto:${contactInfo.email}` },
+        { icon: Phone, label: 'Phone', value: contactInfo.phone, href: `tel:${contactInfo.phone}` },
+        { icon: MapPin, label: 'Location', value: locale === 'ar' ? contactInfo.location_ar : contactInfo.location_en, href: null },
+        { icon: Linkedin, label: 'LinkedIn', value: contactInfo.linkedin_url?.replace('https://', '').replace('http://', '') || '', href: contactInfo.linkedin_url || null },
+      ]
+    : [
+        { icon: Mail, label: 'Email', value: 'maaaar3y@gmail.com', href: 'mailto:maaaar3y@gmail.com' },
+        { icon: Phone, label: 'Phone', value: '+20 100 479 3760', href: 'tel:+201004793760' },
+        { icon: MapPin, label: 'Location', value: 'Kafr El-Sheikh, Egypt', href: null },
+        { icon: Linkedin, label: 'LinkedIn', value: 'linkedin.com/in/maaaar3y', href: 'https://linkedin.com/in/maaaar3y' },
+      ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('sending');
-    // Phase 2: wire to Supabase contact_messages table
-    await new Promise((r) => setTimeout(r, 1200));
-    setStatus('sent');
-    setForm({ name: '', email: '', message: '' });
-    setTimeout(() => setStatus('idle'), 4000);
+    try {
+      await submitContactMessage({
+        name: form.name,
+        email: form.email,
+        subject: form.subject || 'No subject',
+        message: form.message,
+      });
+      setStatus('sent');
+      setForm({ name: '', email: '', subject: '', message: '' });
+      setTimeout(() => setStatus('idle'), 4000);
+    } catch {
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 4000);
+    }
   };
 
   return (
@@ -44,7 +70,7 @@ export function Contact() {
           {/* Contact info */}
           <Reveal>
             <div className="flex h-full flex-col gap-4">
-              {contactInfo.map((info) => {
+              {contactItems.map((info) => {
                 const Wrapper = info.href ? 'a' : 'div';
                 return (
                   <Wrapper
@@ -68,6 +94,27 @@ export function Contact() {
                   </Wrapper>
                 );
               })}
+
+              {/* Extra social links */}
+              {socialLinks.filter((s) => !['linkedin', 'email', 'mail'].includes(s.platform.toLowerCase())).length > 0 && (
+                <div className="card-glow glass flex items-center gap-3 rounded-2xl p-5">
+                  {socialLinks.map((s) => {
+                    const SIcon = getIcon(s.icon_name);
+                    return (
+                      <a
+                        key={s.id}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={s.label_en}
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-border/50 bg-card/40 text-muted-foreground transition-all hover:border-primary/40 hover:text-primary hover:-translate-y-0.5"
+                      >
+                        <SIcon className="h-4 w-4" />
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </Reveal>
 
@@ -101,6 +148,19 @@ export function Contact() {
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     className="w-full rounded-xl border border-border/50 bg-card/40 px-4 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary/50 focus:bg-card/60"
                     placeholder="you@example.com"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="subject" className="mb-1.5 block text-sm font-medium">
+                    Subject
+                  </label>
+                  <input
+                    id="subject"
+                    type="text"
+                    value={form.subject}
+                    onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                    className="w-full rounded-xl border border-border/50 bg-card/40 px-4 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-primary/50 focus:bg-card/60"
+                    placeholder="What's this about?"
                   />
                 </div>
                 <div>
@@ -140,6 +200,12 @@ export function Contact() {
                       Message Sent!
                     </>
                   )}
+                  {status === 'error' && (
+                    <>
+                      <AlertCircle className="h-4 w-4" />
+                      Failed to send
+                    </>
+                  )}
                 </button>
                 <AnimatePresence>
                   {status === 'sent' && (
@@ -150,6 +216,16 @@ export function Contact() {
                       className="text-center text-sm text-success"
                     >
                       Thank you! I&apos;ll get back to you soon.
+                    </motion.p>
+                  )}
+                  {status === 'error' && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="text-center text-sm text-destructive"
+                    >
+                      Something went wrong. Please try again or email directly.
                     </motion.p>
                   )}
                 </AnimatePresence>

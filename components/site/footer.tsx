@@ -1,22 +1,43 @@
 'use client';
 
-import { ArrowUp, Linkedin, Mail, Phone } from 'lucide-react';
+import { ArrowUp, Mail, Phone, type LucideIcon } from 'lucide-react';
 import { useLanguage } from './language-provider';
 import { ThemeToggle } from './theme-toggle';
+import { getIcon } from '@/lib/supabase/icon-map';
+import type { NavigationItem, SiteSettings, SocialLink, ContactInfo } from '@/lib/supabase/types';
 
-const navLinks = [
-  { id: 'about', key: 'nav.about' },
-  { id: 'experience', key: 'nav.experience' },
-  { id: 'graduation', key: 'nav.graduation' },
-  { id: 'skills', key: 'nav.skills' },
-  { id: 'certifications', key: 'nav.certifications' },
-  { id: 'achievements', key: 'nav.achievements' },
-  { id: 'timeline', key: 'nav.timeline' },
-  { id: 'contact', key: 'nav.contact' },
-];
+interface FooterProps {
+  siteSettings: SiteSettings | null;
+  navItems: NavigationItem[];
+  socialLinks: SocialLink[];
+  contactInfo: ContactInfo | null;
+}
 
-export function Footer() {
-  const { t } = useLanguage();
+export function Footer({ siteSettings, navItems, socialLinks, contactInfo }: FooterProps) {
+  const { t, locale } = useLanguage();
+
+  const ownerName = siteSettings ? (locale === 'ar' ? siteSettings.owner_name_ar : siteSettings.owner_name_en) : 'Youssef M. Marey';
+  const description = siteSettings ? (locale === 'ar' ? siteSettings.description_ar : siteSettings.description_en) : 'English Language & Translation graduate, career development specialist, and bilingual project coordinator.';
+
+  const items = navItems.length > 0
+    ? navItems.map((item) => ({ id: item.section_id, label: locale === 'ar' ? item.label_ar : item.label_en }))
+    : [
+        { id: 'about', label: t('nav.about') },
+        { id: 'experience', label: t('nav.experience') },
+        { id: 'graduation', label: t('nav.graduation') },
+        { id: 'skills', label: t('nav.skills') },
+        { id: 'certifications', label: t('nav.certifications') },
+        { id: 'achievements', label: t('nav.achievements') },
+        { id: 'timeline', label: t('nav.timeline') },
+        { id: 'contact', label: t('nav.contact') },
+      ];
+
+  const email = contactInfo?.email ?? 'maaaar3y@gmail.com';
+  const phone = contactInfo?.phone ?? '+20 100 479 3760';
+
+  const socials = socialLinks.length > 0
+    ? socialLinks
+    : [];
 
   return (
     <footer className="relative border-t border-border/30 py-12">
@@ -30,7 +51,7 @@ export function Footer() {
               </div>
               <div className="flex flex-col leading-none">
                 <span className="font-serif text-sm font-semibold tracking-tight">
-                  Youssef M. Marey
+                  {ownerName}
                 </span>
                 <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                   Personal Brand
@@ -38,8 +59,7 @@ export function Footer() {
               </div>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              English Language &amp; Translation graduate, career development
-              specialist, and bilingual project coordinator.
+              {description}
             </p>
           </div>
 
@@ -49,7 +69,7 @@ export function Footer() {
               Navigation
             </h4>
             <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-2">
-              {navLinks.map((link) => (
+              {items.map((link) => (
                 <button
                   key={link.id}
                   onClick={() =>
@@ -57,7 +77,7 @@ export function Footer() {
                   }
                   className="link-underline text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  {t(link.key)}
+                  {link.label}
                 </button>
               ))}
             </div>
@@ -69,25 +89,31 @@ export function Footer() {
               Connect
             </h4>
             <div className="mt-4 flex flex-col gap-2.5">
+              {socials.map((s) => {
+                const SIcon = getIcon(s.icon_name) as LucideIcon;
+                return (
+                  <a
+                    key={s.id}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link-underline inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    <SIcon className="h-4 w-4" /> {s.label_en}
+                  </a>
+                );
+              })}
               <a
-                href="https://linkedin.com/in/maaaar3y"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`mailto:${email}`}
                 className="link-underline inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
               >
-                <Linkedin className="h-4 w-4" /> LinkedIn
+                <Mail className="h-4 w-4" /> {email}
               </a>
               <a
-                href="mailto:maaaar3y@gmail.com"
+                href={`tel:${phone}`}
                 className="link-underline inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
               >
-                <Mail className="h-4 w-4" /> maaaar3y@gmail.com
-              </a>
-              <a
-                href="tel:+201004793760"
-                className="link-underline inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-              >
-                <Phone className="h-4 w-4" /> +20 100 479 3760
+                <Phone className="h-4 w-4" /> {phone}
               </a>
             </div>
           </div>
@@ -96,7 +122,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border/30 pt-6 sm:flex-row">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Youssef M. Marey. All rights reserved.
+            © {new Date().getFullYear()} {ownerName}. All rights reserved.
           </p>
           <div className="flex items-center gap-3">
             <ThemeToggle />

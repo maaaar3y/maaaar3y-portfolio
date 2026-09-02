@@ -6,20 +6,15 @@ import { Menu, X } from 'lucide-react';
 import { ThemeToggle } from './theme-toggle';
 import { LanguageSwitcher } from './language-switcher';
 import { useLanguage } from './language-provider';
+import type { NavigationItem, SiteSettings } from '@/lib/supabase/types';
 
-const navItems = [
-  { id: 'about', key: 'nav.about' },
-  { id: 'experience', key: 'nav.experience' },
-  { id: 'graduation', key: 'nav.graduation' },
-  { id: 'skills', key: 'nav.skills' },
-  { id: 'certifications', key: 'nav.certifications' },
-  { id: 'achievements', key: 'nav.achievements' },
-  { id: 'timeline', key: 'nav.timeline' },
-  { id: 'contact', key: 'nav.contact' },
-];
+interface NavbarProps {
+  navItems: NavigationItem[];
+  siteSettings: SiteSettings | null;
+}
 
-export function Navbar() {
-  const { t } = useLanguage();
+export function Navbar({ navItems, siteSettings }: NavbarProps) {
+  const { t, locale } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { scrollY } = useScroll();
@@ -32,6 +27,21 @@ export function Navbar() {
     setMobileOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const items = navItems.length > 0
+    ? navItems.map((item) => ({ id: item.section_id, label: locale === 'ar' ? item.label_ar : item.label_en }))
+    : [
+        { id: 'about', label: t('nav.about') },
+        { id: 'experience', label: t('nav.experience') },
+        { id: 'graduation', label: t('nav.graduation') },
+        { id: 'skills', label: t('nav.skills') },
+        { id: 'certifications', label: t('nav.certifications') },
+        { id: 'achievements', label: t('nav.achievements') },
+        { id: 'timeline', label: t('nav.timeline') },
+        { id: 'contact', label: t('nav.contact') },
+      ];
+
+  const ownerName = siteSettings ? (locale === 'ar' ? siteSettings.owner_name_ar : siteSettings.owner_name_en) : 'Youssef M. Marey';
 
   return (
     <>
@@ -62,7 +72,7 @@ export function Navbar() {
               </div>
               <div className="hidden flex-col leading-none sm:flex">
                 <span className="font-serif text-sm font-semibold tracking-tight">
-                  Youssef M. Marey
+                  {ownerName}
                 </span>
                 <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
                   Personal Brand
@@ -72,13 +82,13 @@ export function Navbar() {
 
             {/* Desktop nav */}
             <nav className="hidden items-center gap-1 lg:flex">
-              {navItems.map((item) => (
+              {items.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollTo(item.id)}
                   className="rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  {t(item.key)}
+                  {item.label}
                 </button>
               ))}
             </nav>
@@ -120,7 +130,7 @@ export function Navbar() {
               className="glass-strong absolute left-4 right-4 top-20 rounded-2xl border border-border/40 p-4 shadow-2xl"
             >
               <div className="flex flex-col gap-1">
-                {navItems.map((item, i) => (
+                {items.map((item, i) => (
                   <motion.button
                     key={item.id}
                     initial={{ opacity: 0, x: -10 }}
@@ -129,7 +139,7 @@ export function Navbar() {
                     onClick={() => scrollTo(item.id)}
                     className="rounded-lg px-4 py-2.5 text-left text-base font-medium text-foreground transition-colors hover:bg-primary/5"
                   >
-                    {t(item.key)}
+                    {item.label}
                   </motion.button>
                 ))}
               </div>
