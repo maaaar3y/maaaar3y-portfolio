@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowDown, Mail, Linkedin, Github, Sparkles, type LucideIcon } from 'lucide-react';
 import { useLanguage } from './language-provider';
 import { getIcon } from '@/lib/supabase/icon-map';
-import type { HeroContent, HeroStat, SiteSettings, SocialLink } from '@/lib/supabase/types';
+import type { HeroContent, HeroStat, SiteSettings, SocialLink, ProfileImage } from '@/lib/supabase/types';
 
 const easeOut = [0.22, 1, 0.36, 1] as const;
 
@@ -13,9 +13,10 @@ interface HeroProps {
   stats: HeroStat[];
   siteSettings: SiteSettings | null;
   socialLinks: SocialLink[];
+  profileImage: ProfileImage | null;
 }
 
-export function Hero({ content, stats, siteSettings, socialLinks }: HeroProps) {
+export function Hero({ content, stats, siteSettings, socialLinks, profileImage }: HeroProps) {
   const { t, locale } = useLanguage();
   const reduce = useReducedMotion();
 
@@ -52,6 +53,9 @@ export function Hero({ content, stats, siteSettings, socialLinks }: HeroProps) {
         { icon: Mail, href: 'mailto:maaaar3y@gmail.com', label: 'Email' },
       ];
 
+  const profileUrl = profileImage?.image_url ?? null;
+  const profileAlt = profileImage ? (locale === 'ar' ? profileImage.alt_text_ar : profileImage.alt_text_en) : title;
+
   return (
     <section
       id="home"
@@ -63,6 +67,20 @@ export function Hero({ content, stats, siteSettings, socialLinks }: HeroProps) {
         animate="show"
         className="section-shell relative z-10 flex flex-col items-center text-center"
       >
+        {/* Profile image */}
+        {profileUrl ? (
+          <motion.div variants={item} className="mb-8">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-full bg-primary/20 blur-2xl" />
+              <img
+                src={profileUrl}
+                alt={profileAlt}
+                className="relative h-32 w-32 rounded-full border-2 border-primary/30 object-cover shadow-xl sm:h-40 sm:w-40"
+              />
+            </div>
+          </motion.div>
+        ) : null}
+
         {/* Badge */}
         {showBadge && (
           <motion.div variants={item}>

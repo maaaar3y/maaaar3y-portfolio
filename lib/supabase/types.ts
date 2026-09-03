@@ -473,6 +473,7 @@ export interface SectionVisibility {
   show_hero: boolean;
   show_about: boolean;
   show_experience: boolean;
+  show_education: boolean;
   show_graduation: boolean;
   show_skills: boolean;
   show_certifications: boolean;

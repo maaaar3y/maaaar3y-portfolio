@@ -3,6 +3,8 @@ import { Navbar } from '@/components/site/navbar';
 import { Hero } from '@/components/site/hero';
 import { About } from '@/components/site/about';
 import { Experience } from '@/components/site/experience';
+import { Education } from '@/components/site/education';
+import { Projects } from '@/components/site/projects';
 import { GraduationProject } from '@/components/site/graduation-project';
 import { Skills } from '@/components/site/skills';
 import { Certifications } from '@/components/site/certifications';
@@ -27,9 +29,11 @@ export default async function Home() {
       <AuroraBackground />
       <Navbar navItems={content?.navItems ?? []} siteSettings={content?.siteSettings ?? null} />
       <main className="relative">
-        {(!sv || sv.show_hero) && <Hero content={content?.heroContent ?? null} stats={content?.heroStats ?? []} siteSettings={content?.siteSettings ?? null} socialLinks={content?.socialLinks ?? []} />}
+        {(!sv || sv.show_hero) && <Hero content={content?.heroContent ?? null} stats={content?.heroStats ?? []} siteSettings={content?.siteSettings ?? null} socialLinks={content?.socialLinks ?? []} profileImage={content?.profileImage ?? null} />}
         {(!sv || sv.show_about) && <About content={content?.aboutContent ?? null} values={content?.aboutValues ?? []} />}
         {(!sv || sv.show_experience) && <Experience experiences={content?.experiences ?? []} />}
+        {(!sv || sv.show_education) && <Education education={content?.education ?? []} />}
+        {(!sv || sv.show_projects) && <Projects projects={content?.projects ?? []} />}
         {(!sv || sv.show_graduation) && <GraduationProject content={content?.gradProject ?? null} phases={content?.gradPhases ?? []} fragrances={content?.gradFragrances ?? []} stats={content?.gradStats ?? []} />}
         {(!sv || sv.show_skills) && <Skills categories={content?.skillCategories ?? []} />}
         {(!sv || sv.show_certifications) && <Certifications certificates={content?.certificates ?? []} />}

@@ -38,10 +38,10 @@ export function About({ content, values }: AboutProps) {
     ? (locale === 'ar' ? content.philosophy_ar : content.philosophy_en)
     : 'Quality work creates trust. Trust creates opportunity. Every detail — from a survey report to a social media reel — matters.';
 
-  const fallbackValues = [
-    { icon_name: 'BookOpen', title_en: 'Lifelong Learning', title_ar: 'التعلم المستمر', description_en: 'Continuously building expertise through accredited training and real-world application.', description_ar: 'بناء الخبرة باستمرار من خلال التدريب المعتمد والتطبيق العملي.' },
-    { icon_name: 'Globe2', title_en: 'Bilingual Bridge', title_ar: 'جسر ثنائي اللغة', description_en: 'Connecting Arabic and English-speaking communities through translation and localization.', description_ar: 'ربط المجتمعات الناطقة بالعربية والإنجليزية من خلال الترجمة والتوطين.' },
-    { icon_name: 'Users', title_en: 'Community Impact', title_ar: 'التأثير المجتمعي', description_en: 'Driving measurable results in career development and national initiatives across Egypt.', description_ar: 'تحقيق نتائج قابلة للقياس في التطوير المهني والمبادرات الوطنية في مصر.' },
+  const fallbackValues: AboutValue[] = [
+    { id: 'fallback-1', icon_name: 'BookOpen', title_en: 'Lifelong Learning', title_ar: 'التعلم المستمر', description_en: 'Continuously building expertise through accredited training and real-world application.', description_ar: 'بناء الخبرة باستمرار من خلال التدريب المعتمد والتطبيق العملي.', sort_order: 0, published: true, created_at: '', updated_at: '' },
+    { id: 'fallback-2', icon_name: 'Globe2', title_en: 'Bilingual Bridge', title_ar: 'جسر ثنائي اللغة', description_en: 'Connecting Arabic and English-speaking communities through translation and localization.', description_ar: 'ربط المجتمعات الناطقة بالعربية والإنجليزية من خلال الترجمة والتوطين.', sort_order: 1, published: true, created_at: '', updated_at: '' },
+    { id: 'fallback-3', icon_name: 'Users', title_en: 'Community Impact', title_ar: 'التأثير المجتمعي', description_en: 'Driving measurable results in career development and national initiatives across Egypt.', description_ar: 'تحقيق نتائج قابلة للقياس في التطوير المهني والمبادرات الوطنية في مصر.', sort_order: 2, published: true, created_at: '', updated_at: '' },
   ];
 
   const displayValues = values.length > 0 ? values : fallbackValues;
@@ -65,21 +65,32 @@ export function About({ content, values }: AboutProps) {
         <Reveal className="mt-16" delay={0.1}>
           <div className="glass card-glow relative overflow-hidden rounded-2xl p-8 sm:p-12">
             <div className="absolute right-0 top-0 h-32 w-32 -translate-y-12 translate-x-12 rounded-full bg-primary/5 blur-3xl" />
-            <div className="relative">
-              <p className="font-serif text-xl leading-relaxed text-foreground text-pretty sm:text-2xl">
-                {summary.includes('3.61') ? (
-                  <>
-                    {summary.split('GPA of 3.61 / 4.00')[0]}
-                    <span className="text-gradient-teal font-semibold">GPA of 3.61 / 4.00</span>
-                    {summary.split('GPA of 3.61 / 4.00')[1]}
-                  </>
-                ) : (
-                  summary
-                )}
-              </p>
-              <p className="mt-6 text-base leading-relaxed text-muted-foreground text-pretty">
-                {summaryDetail}
-              </p>
+            <div className="relative flex flex-col gap-8 sm:flex-row sm:items-start">
+              {content?.image_url && (
+                <div className="shrink-0 sm:order-2">
+                  <img
+                    src={content.image_url}
+                    alt={title}
+                    className="h-48 w-full rounded-2xl border border-border/40 object-cover sm:h-56 sm:w-56"
+                  />
+                </div>
+              )}
+              <div className="flex-1">
+                <p className="font-serif text-xl leading-relaxed text-foreground text-pretty sm:text-2xl">
+                  {summary.includes('3.61') ? (
+                    <>
+                      {summary.split('GPA of 3.61 / 4.00')[0]}
+                      <span className="text-gradient-teal font-semibold">GPA of 3.61 / 4.00</span>
+                      {summary.split('GPA of 3.61 / 4.00')[1]}
+                    </>
+                  ) : (
+                    summary
+                  )}
+                </p>
+                <p className="mt-6 text-base leading-relaxed text-muted-foreground text-pretty">
+                  {summaryDetail}
+                </p>
+              </div>
             </div>
           </div>
         </Reveal>
