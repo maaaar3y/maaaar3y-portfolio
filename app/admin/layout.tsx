@@ -48,24 +48,24 @@ function AdminGuard({ children }: { children: React.ReactNode }) {
     }
   }, [session, pathname, router, signOut]);
 
-  if (!mounted || loading || (session && pathname !== '/admin/login' && !adminChecked)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!session && pathname !== '/admin/login') {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   if (pathname === '/admin/login') {
     return <>{children}</>;
+  }
+
+  if (!mounted || loading || (session && !adminChecked)) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return <AdminShell>{children}</AdminShell>;

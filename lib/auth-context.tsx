@@ -21,10 +21,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const supabase = createBrowserClient();
 
+    const timeout = setTimeout(() => setLoading(false), 5000);
+
     supabase.auth.getSession().then(({ data }) => {
+      clearTimeout(timeout);
       setSession(data.session);
       setLoading(false);
     }).catch(() => {
+      clearTimeout(timeout);
       setLoading(false);
     });
 
