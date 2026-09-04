@@ -48,11 +48,11 @@ function AdminGuard({ children }: { children: React.ReactNode }) {
     }
   }, [session, pathname, router, signOut]);
 
-  if (pathname === '/admin/login') {
+  if (pathname === '/admin/login' || !mounted) {
     return <>{children}</>;
   }
 
-  if (!mounted || loading || (session && !adminChecked)) {
+  if (loading || (session && !adminChecked)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
