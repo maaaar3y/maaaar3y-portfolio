@@ -28,8 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
     // fallback to defaults below
   }
 
-  const title = seo?.page_title_en ?? siteSettings?.site_title_en ?? 'Youssef M. Marey — English Language & Translation Graduate';
-  const description = seo?.meta_description_en ?? siteSettings?.description_en ?? 'Personal brand platform of Youssef M. Marey — English Language and Translation graduate, career development specialist, and bilingual project coordinator from Kafr El-Sheikh, Egypt.';
+  const title = seo?.page_title_en ?? siteSettings?.site_title_en ?? 'Youssef M. Marey — Bilingual Project Coordinator & M&E Specialist';
+  const description = seo?.meta_description_en ?? siteSettings?.description_en ?? 'Bilingual (EN/AR) project coordinator and M&E specialist with hands-on experience building monitoring systems (UCCD), managing stakeholder communication, and delivering full project management frameworks. English Language & Translation graduate, Kafrelsheikh University (Excellent with Honors).';
   const keywords = seo?.keywords ?? [
     'Youssef Marey',
     'Youssef M. Marey',
