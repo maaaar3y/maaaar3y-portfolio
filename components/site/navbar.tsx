@@ -57,7 +57,7 @@ export function Navbar({ navItems, siteSettings }: NavbarProps) {
           <div
             className={`flex items-center justify-between rounded-2xl px-4 py-2.5 transition-all duration-500 ${
               scrolled
-                ? 'glass-strong shadow-lg shadow-black/[0.03]'
+                ? 'glass-strong shadow-lg shadow-foreground/[0.04] dark:shadow-primary/[0.08]'
                 : 'bg-transparent'
             }`}
           >

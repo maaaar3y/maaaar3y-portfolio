@@ -57,46 +57,51 @@
   }
 
   .dark {
-    --background: 195 40% 5%;
-    --foreground: 180 15% 92%;
-    --card: 195 35% 8%;
-    --card-foreground: 180 15% 92%;
-    --popover: 195 35% 8%;
-    --popover-foreground: 180 15% 92%;
+    /* Layered surfaces — deep charcoal with perceptible elevation steps */
+    --background: 200 28% 6%;
+    --foreground: 180 15% 93%;
+    --card: 200 24% 9%;
+    --card-foreground: 180 15% 93%;
+    --popover: 200 26% 11%;
+    --popover-foreground: 180 15% 93%;
 
-    --primary: 185 75% 55%;
-    --primary-foreground: 195 40% 8%;
-    --primary-glow: 185 80% 62%;
+    /* Brand — brighter teal for dark background contrast */
+    --primary: 185 72% 56%;
+    --primary-foreground: 200 35% 8%;
+    --primary-glow: 185 78% 63%;
 
-    --secondary: 195 25% 14%;
+    --secondary: 200 20% 14%;
     --secondary-foreground: 180 15% 90%;
 
-    --accent: 38 70% 60%;
+    /* Accent — slightly brighter gold for visibility */
+    --accent: 38 72% 62%;
     --accent-foreground: 40 30% 10%;
 
-    --success: 152 55% 50%;
+    --success: 152 55% 52%;
     --success-foreground: 150 30% 8%;
-    --warning: 35 85% 58%;
+    --warning: 35 85% 60%;
     --warning-foreground: 40 40% 10%;
-    --destructive: 0 72% 55%;
+    --destructive: 0 72% 56%;
     --destructive-foreground: 0 0% 98%;
-    --info: 200 80% 55%;
+    --info: 200 80% 57%;
     --info-foreground: 200 30% 8%;
 
-    --muted: 195 25% 14%;
-    --muted-foreground: 180 12% 58%;
-    --border: 195 25% 16%;
-    --input: 195 25% 16%;
-    --ring: 185 75% 55%;
+    /* Muted — slightly lighter for readability, borders clearly visible */
+    --muted: 200 20% 15%;
+    --muted-foreground: 180 12% 62%;
+    --border: 200 18% 20%;
+    --input: 200 20% 18%;
+    --ring: 185 72% 56%;
 
-    --glass-bg: 195 35% 10% / 0.55;
-    --glass-border: 180 15% 100% / 0.08;
+    /* Glass — more transparent with brighter border for premium feel */
+    --glass-bg: 200 24% 10% / 0.6;
+    --glass-border: 180 15% 100% / 0.1;
 
-    --chart-1: 185 75% 50%;
-    --chart-2: 38 70% 58%;
-    --chart-3: 152 55% 50%;
-    --chart-4: 200 70% 55%;
-    --chart-5: 25 75% 58%;
+    --chart-1: 185 72% 52%;
+    --chart-2: 38 72% 60%;
+    --chart-3: 152 55% 52%;
+    --chart-4: 200 70% 57%;
+    --chart-5: 25 75% 60%;
   }
 }
 
@@ -137,6 +142,29 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--primary) / 0.6);
+  }
+
+  /* Dark mode scrollbar — slightly brighter for visibility */
+  .dark ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.3);
+    border: 2px solid hsl(var(--background));
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+  }
+
+  /* Enhanced focus ring for dark mode */
+  .dark *:focus-visible {
+    outline: 2px solid hsl(var(--primary) / 0.6);
+    outline-offset: 2px;
+  }
+
+  /* Dark mode selection — slightly more vibrant */
+  .dark ::selection {
+    background: hsl(var(--primary) / 0.3);
   }
 }
 
@@ -190,6 +218,11 @@
     box-shadow:
       0 0 0 1px hsl(var(--primary) / 0.15),
       0 8px 40px -8px hsl(var(--primary) / 0.25);
+  }
+  .dark .card-glow:hover {
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.2),
+      0 8px 40px -8px hsl(var(--primary) / 0.15);
   }
 
   /* Section container */
