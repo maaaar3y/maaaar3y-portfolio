@@ -1,9 +1,8 @@
 'use client';
 
-import { Reveal, Stagger, StaggerItem } from '@/components/motion/reveal';
+import { Stagger, StaggerItem } from '@/components/motion/reveal';
 import { SectionHeading } from './section-heading';
-import { motion, useReducedMotion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { Check } from 'lucide-react';
 import { useLanguage } from './language-provider';
 import { getIcon } from '@/lib/supabase/icon-map';
 import type { SkillCategory, Skill } from '@/lib/supabase/types';
@@ -19,13 +18,13 @@ export function Skills({ categories }: SkillsProps) {
     <section id="skills" className="relative py-24 sm:py-32">
       <div className="section-shell">
         <SectionHeading
-          eyebrow="Skills"
+          eyebrow="Areas of Expertise"
           title={
             <>
-              A toolkit for <span className="text-gradient">data, content, and communication</span>
+              Four connected <span className="text-gradient">areas of expertise</span>
             </>
           }
-          description="Categorized, visualized, and grounded in real-world application across career development and community work."
+          description="Bridging strategy, execution, data, and communication to deliver meaningful results across project coordination, monitoring & evaluation, business & marketing, and bilingual translation."
         />
 
         <Stagger className="mt-16 grid gap-6 md:grid-cols-2" staggerChildren={0.12}>
@@ -41,13 +40,10 @@ export function Skills({ categories }: SkillsProps) {
 }
 
 function SkillCard({ category, locale }: { category: SkillCategory & { skills: Skill[] }; locale: 'en' | 'ar' }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
-  const reduce = useReducedMotion();
   const Icon = getIcon(category.icon_name);
 
   return (
-    <div ref={ref} className="card-glow glass h-full rounded-2xl p-6 sm:p-8">
+    <div className="card-glow glass h-full rounded-2xl p-6 sm:p-8">
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
           <Icon className="h-5 w-5" />
@@ -55,25 +51,17 @@ function SkillCard({ category, locale }: { category: SkillCategory & { skills: S
         <h3 className="font-serif text-lg font-semibold">{locale === 'ar' ? category.title_ar : category.title_en}</h3>
       </div>
 
-      <div className="mt-6 space-y-5">
+      <ul className="mt-6 space-y-3">
         {category.skills.map((skill) => (
-          <div key={skill.id}>
-            <div className="flex items-center justify-between">
+          <li key={skill.id} className="flex items-start gap-2.5">
+            <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <div>
               <span className="text-sm font-medium text-foreground">{locale === 'ar' ? skill.name_ar : skill.name_en}</span>
-              <span className="text-xs text-muted-foreground">{skill.level}%</span>
+              <p className="text-xs text-muted-foreground">{locale === 'ar' ? skill.description_ar : skill.description_en}</p>
             </div>
-            <p className="mt-0.5 text-xs text-muted-foreground">{locale === 'ar' ? skill.description_ar : skill.description_en}</p>
-            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              <motion.div
-                initial={reduce ? { width: `${skill.level}%` } : { width: 0 }}
-                animate={inView || reduce ? { width: `${skill.level}%` } : { width: 0 }}
-                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-                className="h-full rounded-full bg-gradient-to-r from-primary to-primary-glow"
-              />
-            </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

@@ -162,7 +162,7 @@ export function Hero({ content, stats, siteSettings, socialLinks, profileImage }
         {stats.length > 0 && (
           <motion.div
             variants={item}
-            className="mt-16 grid w-full max-w-2xl grid-cols-3 gap-4"
+            className="mt-16 grid w-full max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4"
           >
             {stats.map((stat) => (
               <div key={stat.id} className="text-center">
